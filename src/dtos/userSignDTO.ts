@@ -1,4 +1,4 @@
-import { IsEmail,  IsString, MinLength } from "class-validator";
+import { IsEmail,  IsString, Length, MinLength } from "class-validator";
 
 export class UserSignUpDTO {
   @IsEmail()
@@ -14,3 +14,13 @@ export class UserSignUpDTO {
   username!: string;
 
 }
+
+export class ConfirmSignUpDto {
+  @IsEmail()
+  username!: string;
+
+  @IsString()
+  @Length(6, 6)
+  code!: string;
+}
+

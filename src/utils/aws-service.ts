@@ -1,5 +1,5 @@
-import { CognitoIdentityProviderClient, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { UserSignUpDTO } from "../dtos/userSignDTO";
+import { CognitoIdentityProviderClient, ConfirmSignUpCommand, ResendConfirmationCodeCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { ConfirmSignUpDto, UserSignUpDTO } from "../dtos/userSignDTO";
 import { AppError } from "./error-handler";
 
 
@@ -34,5 +34,23 @@ export class AwsService {
         return await client.send(command);  
 
 
+    }
+    public async confirmSignUp(data: ConfirmSignUpDto) {
+        const client = new CognitoIdentityProviderClient({ region: process.env.COGNITO_REGION });
+        const command = new ConfirmSignUpCommand({
+            ClientId: process.env.COGNITO_CLIENT_ID,
+            Username: 'aman',
+            ConfirmationCode: data.code,
+        });
+        const result =  await client.send(command);
+        return result;
+    }
+    public async resendConfirmationCode(username: string) {
+        const client = new CognitoIdentityProviderClient({ region: process.env.COGNITO_REGION });
+        const command = new ResendConfirmationCodeCommand({
+            ClientId: process.env.COGNITO_CLIENT_ID,
+            Username: username,
+        });
+        return await client.send(command);
     }
 }
