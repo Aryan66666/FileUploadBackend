@@ -1,4 +1,6 @@
 import { app } from "./app"
+import "reflect-metadata";
+
 import mongoose from 'mongoose';
 const uri = process.env.MONGOURL
 const port = process.env.PORT || 6000;
