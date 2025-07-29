@@ -1,5 +1,5 @@
-import { ConfirmSignUpCommandOutput, SignUpCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
-import { ConfirmSignUpDto, UserSignUpDTO } from "../dtos/userSignDTO";
+import { ConfirmSignUpCommandOutput, InitiateAuthCommand, InitiateAuthCommandOutput, SignUpCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
+import { ConfirmSignUpDto, SignInDto, UserSignUpDTO } from "../dtos/userSignDTO";
 import { AwsService } from "./aws-service";
 import { AppError } from "./error-handler";
 
@@ -20,6 +20,13 @@ export class AuthHandler {
             throw new AppError("Confirmation Failed", 400);
         }
         return result; 
+    }
+    public async signIn(dto: SignInDto): Promise<InitiateAuthCommandOutput>{
+        const user = await this.awsService.signIn(dto);
+        if(!user){
+            throw new AppError("Sign In Failed", 400);
+        }
+        return user;
     }
     
 }

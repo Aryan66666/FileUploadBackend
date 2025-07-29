@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthHandler } from "../utils/auth-handler";
-import { ConfirmSignUpDto, UserSignUpDTO } from "../dtos/userSignDTO";
+import { ConfirmSignUpDto, SignInDto, UserSignUpDTO } from "../dtos/userSignDTO";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { isNamedExportBindings } from "typescript";
@@ -47,4 +47,18 @@ export class UserController {
 
 
     }
+    public async signIn(req:Request, res:Response, next:NextFunction){
+        const model: SignInDto = plainToInstance(SignInDto, req.body);
+        const error = await validate(model);
+        if(error.length){
+            next(error);
+        }
+        const result = await this.authHandler.signIn(model);
+        if (result.AuthenticationResult) {
+            return sendResponse(res, 200, "User signed in successfully", result);
+        } else {
+            return sendResponse(res, 400, "Sign in failed", null);
     }
+    }
+
+}

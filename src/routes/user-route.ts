@@ -13,5 +13,6 @@ router
   .post("/signup", controller.signup.bind(controller))
   .post("/confirm-signup", controller.confirmSignUp.bind(controller))
   .post("/resend-confirmation-code", controller.resendConfirmationCode.bind(controller))
+  .post("/sign-in", controller.signIn.bind(controller));
 
 export default router;
