@@ -1,4 +1,4 @@
-import { IsEmail,  isString,  IsString, Length, MinLength } from "class-validator";
+import { IsEmail,  IsOptional,  isString,  IsString, Length, MinLength } from "class-validator";
 import { StringLiteral } from "typescript";
 
 export class UserSignUpDTO {
@@ -13,6 +13,25 @@ export class UserSignUpDTO {
 
   @IsString()
   username!: string;
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  profilePhoto?: string;
+
+  @IsString()
+  userType!: string;
+
+
+
+
+
+
+
+
 
 }
 
