@@ -1,16 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthHandler } from "../utils/auth-handler";
+import { AuthService } from "../utils/auth-service";
 import { ConfirmSignUpDto, SignInDto, UserSignUpDTO } from "../dtos/userSignDTO";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { isNamedExportBindings } from "typescript";
 import { sendResponse } from "../utils/response";
-import { CognitoIdentityProvider } from "@aws-sdk/client-cognito-identity-provider";
 import { AwsService } from "../utils/aws-service";
+import { UserRepository } from "../repositories/user-repository";
 
 export class UserController {
-    constructor(private readonly authHandler: AuthHandler){
+    constructor(private readonly authHandler: AuthService,
+        private readonly repository: UserRepository
+    ){
         this.authHandler = authHandler;
+        this.repository = repository
     }
     public async signup(req: Request, res:Response, next: NextFunction) {
         const model: UserSignUpDTO  = plainToInstance(UserSignUpDTO, req.body as Object);
@@ -18,7 +20,8 @@ export class UserController {
         if(error.length>0){
         next(error);    
         }
-        const result = await this.authHandler.signUp(model);
+        const result = await this.authHandler.signUp(model,req?.file);
+        const file = req?.file;
         return sendResponse(res, 201, "User signed up succesfully",result);
 
 
@@ -32,6 +35,7 @@ export class UserController {
             next(error);
         }
         const result = await this.authHandler.confirmSignUp(model);
+        await this.repository.updateUserVerficationStatus(model.username);
         return sendResponse(res, 200, "User Confirmed successfully", result);
 
     }
@@ -60,5 +64,6 @@ export class UserController {
             return sendResponse(res, 400, "Sign in failed", null);
     }
     }
+
 
 }

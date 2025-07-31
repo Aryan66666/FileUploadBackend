@@ -1,6 +1,7 @@
 import { CognitoIdentityProviderClient, ConfirmSignUpCommand, GetSigningCertificateCommandOutput, InitiateAuthCommand, InitiateAuthCommandOutput, ResendConfirmationCodeCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { ConfirmSignUpDto, SignInDto, UserSignUpDTO } from "../dtos/userSignDTO";
 import { AppError } from "./error-handler";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 
 
@@ -70,6 +71,35 @@ export class AwsService {
             throw new AppError("Authentication failed", 401)
         }
         return result;
+
+    }
+    public async uploadileToS3(file: Express.Multer.File, key: string) {
+        const s3 = new S3Client({
+            region: process.env.AWS_REGION!,
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+            }
+
+        })
+        const bucketName = process.env.AWS_BUCKET_NAME!;
+        const params = {
+            Bucket: bucketName,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype
+        }
+        try {
+            const putCommand = new PutObjectCommand(params);
+            const result = await s3.send(putCommand);
+            return result;
+        }
+        catch (err) {
+            console.log(err);
+            throw new AppError((err as Error).message, 500);
+        }
+
+
 
     }
 }
