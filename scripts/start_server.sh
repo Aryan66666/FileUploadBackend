@@ -9,4 +9,4 @@ AWS_SECRET_ACCESS_KEY = jSz25aNpMgz2jl8DGX9seUvTnwATdg5NUfdBtBnd
 AWS_REGION = eu-west-1
 #!/bin/bash
 cd /home/ec2-user/backend
-pm2 restart all || pm2 start dist/index.js --name backend
+pm2 restart all --update-env || pm2 start dist/index.js --name backend
