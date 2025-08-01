@@ -1,12 +1,17 @@
-
-PORT = 3000
-MONGOURL = mongodb+srv://ZerodhaDB:ZerodhaDB@backendmilestone.r31aujm.mongodb.net/?retryWrites=true&w=majority&appName=BackendMilestone
-COGNITO_CLIENT_ID = 4lgt18btmo1e2378j9kvpg10u8
-COGNITO_REGION = eu-west-1
-AWS_BUCKET_NAME =filesharingprojectbucket
-AWS_ACCESS_KEY_ID = AKIAQYEI5IF34NI7D37P
-AWS_SECRET_ACCESS_KEY = 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
-AWS_REGION = eu-west-1
 #!/bin/bash
+
+# Fetch secrets JSON from AWS Secrets Manager
+SECRET_JSON=$(aws secretsmanager get-secret-value \
+  --secret-id BackendSecrets \
+  --region eu-west-1 \
+  --query SecretString \
+  --output text)
+
+# Parse JSON and export each key-value as env var (requires jq)
+export $(echo $SECRET_JSON | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]')
+
+# Go to backend directory
 cd /home/ec2-user/backend
+
+# Start or restart your app with updated env
 pm2 restart all --update-env || pm2 start dist/index.js --name backend
