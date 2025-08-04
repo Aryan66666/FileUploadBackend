@@ -35,4 +35,11 @@ export class UserRepository {
         await user.save();
         console.log("User verification status updated succesfully")
     }
+    public async getUserIdByUsername(username: string): Promise< string > {
+        const user = await UserModel.findOne({username: username});
+        if(!user){
+            throw new AppError("User Not found", 404);
+        }
+        return user._id.toString();
+    }
 }
