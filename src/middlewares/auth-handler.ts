@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { AppError } from "../utils/error-handler";
-import { verifyCognitoJwt } from "../utils/jwks-utiity";
+import { verifyCognitoJwt } from "../utils/jwks-utility";
 
 export class AuthHandler {
 
